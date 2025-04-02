@@ -1,4 +1,4 @@
-/* ===============================
+//* ===============================
    Global Variables & Constants
    =============================== */
 
@@ -798,19 +798,29 @@ function setupDrawingToggle() {
 function setupCanvasEvents() {
   const canvas = document.getElementById('drawCanvas');
   if (!canvas) return;
+
+  // Ensure canvas internal resolution matches displayed size
+  function resizeCanvasToDisplaySize(canvas) {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+  }
+
+  resizeCanvasToDisplaySize(canvas);
+
   const ctx = canvas.getContext('2d');
   let drawing = false;
 
   function getTouchPos(touchEvent) {
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
 
-  return {
-    x: (touchEvent.touches[0].clientX - rect.left) * scaleX,
-    y: (touchEvent.touches[0].clientY - rect.top) * scaleY
-  };
-}
+    return {
+      x: (touchEvent.touches[0].clientX - rect.left) * scaleX,
+      y: (touchEvent.touches[0].clientY - rect.top) * scaleY
+    };
+  }
 
   function startDrawing(e) {
     drawing = true;
