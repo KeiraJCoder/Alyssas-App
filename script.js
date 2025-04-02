@@ -227,7 +227,7 @@ function submitShowTellImage(event) {
   formData.append('response', JSON.stringify({ text: textInput.value }));
   formData.append('photo', fileInput.files[0]);
 
-  fetch('http://localhost:3001/submit', {
+  fetch('https://alyssas-app-backend.onrender.com/submit', {
     method: 'POST',
     body: formData
   })
@@ -399,7 +399,7 @@ function completeSection(sectionId) {
       response: wrappedResponse
     });
   
-    fetch('http://localhost:3001/submit', {
+    fetch('https://alyssas-app-backend.onrender.com/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -928,7 +928,7 @@ async function submitDrawing(event) {
   const base64Image = canvas.toDataURL('image/png');
 
   try {
-    const res = await fetch('http://localhost:3001/submit', {
+    const res = await fetch('https://alyssas-app-backend.onrender.com/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
