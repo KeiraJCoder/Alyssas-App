@@ -772,29 +772,6 @@ function selectActivity(activity, el) {
    DRAWING CANVAS SETUP
 =============================== */
 
-function setupDrawingToggle() {
-  const drawToggle = document.getElementById('startDrawingButton');
-  if (!drawToggle) return;
-
-  drawingControls = document.getElementById('drawingControls');
-  if (!drawingControls) return;
-
-  drawToggle.addEventListener('click', () => {
-    const isVisible = drawingControls.classList.contains('visible');
-
-    if (isVisible) {
-      drawingControls.classList.remove('visible');
-      setTimeout(() => {
-        drawingControls.style.display = 'none';
-      }, 300);
-    } else {
-      drawingControls.style.display = 'block';
-      requestAnimationFrame(() => drawingControls.classList.add('visible'));
-    }
-  });
-}
-
-
 function setupCanvasEvents() {
   const canvas = document.getElementById('drawCanvas');
   if (!canvas) return;
@@ -829,6 +806,9 @@ function setupCanvasEvents() {
       const pos = getTouchPos(e);
       ctx.beginPath();
       ctx.moveTo(pos.x, pos.y);
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(e.offsetX, e.offsetY);
     }
   }
 
@@ -856,7 +836,7 @@ function setupCanvasEvents() {
     ctx.moveTo(x, y);
   }
 
-  function stopDrawing(e) {
+  function stopDrawing() {
     drawing = false;
     ctx.beginPath();
   }
