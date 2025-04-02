@@ -801,23 +801,63 @@ function setupCanvasEvents() {
   const ctx = canvas.getContext('2d');
   let drawing = false;
 
-  canvas.addEventListener('mousedown', () => drawing = true);
-  canvas.addEventListener('mouseup', () => {
-    drawing = false;
-    ctx.beginPath();
-  });
+  function getTouchPos(touchEvent) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: touchEvent.touches[0].clientX - rect.left,
+      y: touchEvent.touches[0].clientY - rect.top
+    };
+  }
 
-  canvas.addEventListener('mousemove', (e) => {
+  function startDrawing(e) {
+    drawing = true;
+    if (e.type.startsWith("touch")) {
+      e.preventDefault();
+      const pos = getTouchPos(e);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+    }
+  }
+
+  function draw(e) {
     if (!drawing) return;
+    e.preventDefault();
     const colour = document.getElementById('colourPicker')?.value || "#000000";
     ctx.lineWidth = 3;
     ctx.lineCap = 'round';
     ctx.strokeStyle = colour;
-    ctx.lineTo(e.offsetX, e.offsetY);
+
+    let x, y;
+    if (e.type.startsWith("touch")) {
+      const pos = getTouchPos(e);
+      x = pos.x;
+      y = pos.y;
+    } else {
+      x = e.offsetX;
+      y = e.offsetY;
+    }
+
+    ctx.lineTo(x, y);
     ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(e.offsetX, e.offsetY);
-  });
+    ctx.moveTo(x, y);
+  }
+
+  function stopDrawing(e) {
+    drawing = false;
+    ctx.beginPath();
+  }
+
+  // Mouse events
+  canvas.addEventListener('mousedown', startDrawing);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', stopDrawing);
+  canvas.addEventListener('mouseout', stopDrawing);
+
+  // Touch events
+  canvas.addEventListener('touchstart', startDrawing, { passive: false });
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('touchend', stopDrawing);
 }
 
 function clearCanvas() {
