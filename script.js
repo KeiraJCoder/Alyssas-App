@@ -802,12 +802,15 @@ function setupCanvasEvents() {
   let drawing = false;
 
   function getTouchPos(touchEvent) {
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: touchEvent.touches[0].clientX - rect.left,
-      y: touchEvent.touches[0].clientY - rect.top
-    };
-  }
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+
+  return {
+    x: (touchEvent.touches[0].clientX - rect.left) * scaleX,
+    y: (touchEvent.touches[0].clientY - rect.top) * scaleY
+  };
+}
 
   function startDrawing(e) {
     drawing = true;
