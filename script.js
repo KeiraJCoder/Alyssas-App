@@ -418,15 +418,13 @@ function completeSection(sectionId) {
   }
 }
 
+//   // Award star
+//   stars++;
+//   localStorage.setItem("earnedStars", stars);
+//   displayStars();
+//   playSound('star');
+// }
 
-  // Award star
-  stars++;
-  localStorage.setItem("earnedStars", stars);
-  displayStars();
-  playSound('star');
-}
-
-      
 
 /* ===============================
       SPINNER WHEEL Setup
