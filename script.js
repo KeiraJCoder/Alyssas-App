@@ -92,50 +92,50 @@ function initApp() {
   updateDrawingCounter();
 
   // Set default drawing colour
-selectedColour = '#000000';
-penSize = 3;
-erasing = false;
+  selectedColour = '#000000';
+  penSize = 3;
+  erasing = false;
 
-const penSizeInput = document.getElementById('penSize');
-const eraserBtn = document.getElementById('eraserToggle');
+  const penSizeInput = document.getElementById('penSize');
+  const eraserBtn = document.getElementById('eraserToggle');
 
-if (penSizeInput) {
-  penSizeInput.addEventListener('input', (e) => {
-    penSize = parseInt(e.target.value, 10);
+  if (penSizeInput) {
+    penSizeInput.addEventListener('input', (e) => {
+      penSize = parseInt(e.target.value, 10);
+    });
+  }
+
+  if (eraserBtn) {
+    eraserBtn.addEventListener('click', () => {
+      erasing = !erasing;
+      eraserBtn.textContent = erasing ? '🩹 Eraser: On' : '🩹 Eraser: Off';
+    });
+  }
+
+
+  // 🎨 Normal colour picker
+  const normalPicker = document.getElementById('normalColourPicker');
+  if (normalPicker) {
+    normalPicker.addEventListener('input', (e) => {
+      selectedColour = e.target.value;
+    });
+  }
+
+  // 🌈 Fullscreen swatches
+  document.querySelectorAll('.fullscreen-swatches .swatch').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedColour = btn.getAttribute('data-colour');
+      document.getElementById('fullscreenColourPicker').value = selectedColour;
+    });
   });
-}
 
-if (eraserBtn) {
-  eraserBtn.addEventListener('click', () => {
-    erasing = !erasing;
-    eraserBtn.textContent = erasing ? '🩹 Eraser: On' : '🩹 Eraser: Off';
-  });
-}
-
-
-// 🎨 Normal colour picker
-const normalPicker = document.getElementById('normalColourPicker');
-if (normalPicker) {
-  normalPicker.addEventListener('input', (e) => {
-    selectedColour = e.target.value;
-  });
-}
-
-// 🌈 Fullscreen swatches
-document.querySelectorAll('.fullscreen-swatches .swatch').forEach(btn => {
-  btn.addEventListener('click', () => {
-    selectedColour = btn.getAttribute('data-colour');
-    document.getElementById('fullscreenColourPicker').value = selectedColour;
-  });
-});
-
-// 🎨 Fullscreen custom colour picker
-const fullscreenPicker = document.getElementById('fullscreenColourPicker');
-if (fullscreenPicker) {
-  fullscreenPicker.addEventListener('input', (e) => {
-    selectedColour = e.target.value;
-  });
-}
+  // 🎨 Fullscreen custom colour picker
+  const fullscreenPicker = document.getElementById('fullscreenColourPicker');
+  if (fullscreenPicker) {
+    fullscreenPicker.addEventListener('input', (e) => {
+      selectedColour = e.target.value;
+    });
+  }
 
   const savedStars = localStorage.getItem("earnedStars");
   if (savedStars) {
