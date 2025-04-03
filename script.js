@@ -1131,25 +1131,20 @@ function resetDailyFields() {
 /* ===============================
    TOGGLE Section Visibility
 =============================== */
+/**
+ * Toggles visibility of a section.
+ * Ensures only one section is open at a time.
+ * Includes checks for daily limits and completion status.
+ */
 function toggleSection(sectionId) {
   const section = document.getElementById(sectionId);
   if (!section) return;
 
-
   const today = new Date().toISOString().split('T')[0];
 
-  // if (sectionId === 'drawing-section' && !isHidden) {
-  //   console.log("🚫 Prevented drawing section from closing again.");
-  //   return;
-  // }
-
-  if (sectionId === 'question-spinner') {
-    const dailyTopics = getDailyTopics();
-    if (dailyTopics.length === 0) {
-      alert("🎉 You've answered all the questions for today!");
-      return;  // Prevent reopening if no questions remain
-    }
-  }
+  // =============================
+  // 🛑 PREVENT ACCESS IF SECTION COMPLETED
+  // =============================
 
   if (sectionId === 'show-tell' && localStorage.getItem(`showTellComplete_${today}`) === 'true') {
     alert("🎉 You’ve already completed Show & Tell today!");
@@ -1161,10 +1156,30 @@ function toggleSection(sectionId) {
     return;
   }
 
+  if (sectionId === 'question-spinner') {
+    const dailyTopics = getDailyTopics();
+    if (dailyTopics.length === 0) {
+      alert("🎉 You've answered all the questions for today!");
+      return;
+    }
+  }
+
+  // =============================
+  // 🔁 CLOSE ANY OTHER OPEN SECTIONS
+  // =============================
+
+  const allCards = document.querySelectorAll('.card');
+  allCards.forEach(card => {
+    if (card !== section) card.classList.add('hidden');
+  });
+
+  // =============================
+  // ✅ TOGGLE TARGET SECTION
+  // =============================
+
   section.classList.toggle('hidden');
   console.log(`🔄 Toggled section: ${sectionId}, Now hidden? ${section.classList.contains('hidden')}`);
 }
-
 
 // Make functions accessible to inline HTML
 window.selectActivity = selectActivity;
