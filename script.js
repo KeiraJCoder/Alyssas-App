@@ -1125,6 +1125,9 @@ function resetDailyFields() {
 
   playSound('reset');
   alert('✅ Daily fields reset successfully!');
+
+  // ✅ Auto refresh to reload all UI cleanly
+  location.reload();
 }
 
 
