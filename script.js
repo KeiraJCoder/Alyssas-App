@@ -91,6 +91,33 @@ window.onload = () => {
 function initApp() {
   updateDrawingCounter();
 
+  let selectedColour = '#000000'; // initial pen colour
+
+  const pickr = Pickr.create({
+    el: '#colourPicker',
+    theme: 'classic', // 'classic' is clean, or use 'nano'
+    default: selectedColour,
+    swatches: [
+      '#000000', '#ffffff', '#ff0000', '#00ff00',
+      '#0000ff', '#ffff00', '#00ffff', '#ff00ff'
+    ],
+    components: {
+      preview: true,
+      opacity: false,
+      hue: true,
+      interaction: {
+        input: true,
+        save: true
+      }
+    }
+  });
+
+pickr.on('save', (color) => {
+  selectedColour = color.toHEXA().toString();
+  pickr.hide();
+});
+
+
   const savedStars = localStorage.getItem("earnedStars");
   if (savedStars) {
     stars = parseInt(savedStars);
@@ -472,7 +499,7 @@ function setupWheel() {
       ctx.arc(wheelRadius, wheelRadius, wheelRadius, startAngle, endAngle);
       ctx.fillStyle = colour;
       ctx.fill();
-      ctx.strokeStyle = '#fff';
+      ctx.strokeStyle = selectedColour;
       ctx.lineWidth = 2;
       ctx.stroke();
 
@@ -832,10 +859,10 @@ function setupCanvasEvents() {
   function draw(e) {
     if (!drawing) return;
     e.preventDefault();
-    const colour = document.getElementById('colourPicker')?.value || "#000000";
     ctx.lineWidth = 3;
     ctx.lineCap = 'round';
-    ctx.strokeStyle = colour;
+    ctx.strokeStyle = selectedColour;
+
 
     let x, y;
     if (e.type.startsWith("touch")) {

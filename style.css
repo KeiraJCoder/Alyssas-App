@@ -266,198 +266,370 @@ footer {
     outline: none;
   }
   
-  /* Drawing Area */
-  #drawingControls {
-    display: none;
-    margin-top: 10px;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    text-align: center;
-  }
-  
-  #drawingControls.visible {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
-  }
-  
-  .draw-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  
-  .text {
-    text-shadow: 1px 1px black;
-    color: rgb(0, 255, 4);
-  }
-  
-  .draw-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-  }
-  
-  .canvas-wrapper {
-    width: 100%;
-    max-width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-    .drawing-canvas {
-    width: 100%;
-    height: 300px;
-    background: white;
-    border: none;
-    display: block;
-    max-width: 800px;
-    touch-action: none;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    cursor: crosshair;
-    transition: box-shadow 0.3s ease;
-  }
-  
-  .drawing-canvas:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
+/* ======================================
+   🎨 General Drawing Area Setup
+====================================== */
+#drawingControls {
+  display: none;
+  margin-top: 10px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  text-align: center;
+}
 
-  canvas#drawCanvas,
-  .drawing-canvas {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-    max-height: 80vh;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 2px solid #ccc;
-    display: block;
-    margin: 0 auto;
-    cursor: crosshair;
-    touch-action: none;
-  }
+#drawingControls.visible {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
 
-  :fullscreen canvas#drawCanvas {
-    max-height: 100vh;
-    height: 100vh;
-  }
+.draw-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
 
-  .draw-buttons {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-  }
-  
-  .draw-buttons button {
-    border-radius: 50px;
-    padding: 10px 16px;
-    font-size: 0.95rem;
-    background: #6cc7ff;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
-  }
-  
-  .draw-buttons button:hover {
-    background: #4aa8df;
-    transform: scale(1.05);
-  }
-  
-  .draw-buttons button:active {
-    transform: scale(0.97);
-  }
-  
-  .done-button {
-    background: #38c172;
-    margin-top: 10px;
-  }
-  
-/* 🎨 Fullscreen Controls */
+.canvas-wrapper {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Drawing toolbar (e.g. colour picker) */
+.draw-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.text {
+  text-shadow: 1px 1px black;
+  color: rgb(0, 255, 4);
+}
+
+/* ======================================
+   🖌️ Canvas Styling (Normal View)
+====================================== */
+.drawing-canvas,
+canvas#drawCanvas {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: 80vh;
+  background: white;
+  border-radius: 10px;
+  border: 2px solid #ccc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: block;
+  margin: 0 auto;
+  cursor: crosshair;
+  touch-action: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.drawing-canvas:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Optional height cap for legacy logic */
+.drawing-canvas {
+  height: 300px;
+}
+
+/* Expand height to 100% in fullscreen */
+:fullscreen canvas#drawCanvas {
+  max-height: 100vh;
+  height: 100vh;
+}
+
+/* ======================================
+   🔘 Drawing Buttons (Below Canvas)
+====================================== */
+.draw-buttons {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.draw-buttons button {
+  border-radius: 50px;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  background: #6cc7ff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.draw-buttons button:hover {
+  background: #4aa8df;
+  transform: scale(1.05);
+}
+
+.draw-buttons button:active {
+  transform: scale(0.97);
+}
+
+.done-button {
+  background: #38c172;
+  margin-top: 10px;
+}
+
+/* ======================================
+   🌟 Activity Buttons Styling
+====================================== */
+.activity-list button.selected {
+  background-color: #2f9e5d;
+  border: 2px solid #249e4a;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* ======================================
+   🎨 General Drawing Area Setup
+====================================== */
+.draw-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.canvas-wrapper,
+.fullscreen-canvas {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Toolbar with colour picker */
+.draw-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.text {
+  text-shadow: 1px 1px black;
+  color: rgb(0, 255, 4);
+}
+
+/* ======================================
+   🖌️ Canvas Styling (Normal View)
+====================================== */
+.drawing-canvas,
+canvas#drawCanvas {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: 80vh;
+  background: white;
+  border-radius: 10px;
+  border: 2px solid #ccc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: block;
+  margin: 0 auto;
+  cursor: crosshair;
+  touch-action: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.drawing-canvas:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Legacy fixed height if needed */
+.drawing-canvas {
+  height: 300px;
+}
+
+/* ======================================
+   🔘 Drawing Buttons (Below Canvas)
+====================================== */
+.draw-buttons {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.draw-buttons button {
+  border-radius: 50px;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  background: #6cc7ff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.draw-buttons button:hover {
+  background: #4aa8df;
+  transform: scale(1.05);
+}
+
+.draw-buttons button:active {
+  transform: scale(0.97);
+}
+
+.done-button {
+  background: #38c172;
+  margin-top: 10px;
+}
+
+/* ======================================
+   🧰 Fullscreen Controls (Normal View)
+====================================== */
 .fullscreen-controls {
-    position: fixed;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 99999;
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    background: #000;
-    padding: 10px 20px;
-    border-radius: 16px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 10px;
+  color: #222;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.fullscreen-controls button {
+  background: #6cc7ff;
+  color: white;
+  font-size: 1rem;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.fullscreen-controls button:hover {
+  background: #4aa8df;
+  transform: scale(1.05);
+}
+
+.fullscreen-controls button:active {
+  transform: scale(0.95);
+}
+
+.fullscreen-controls label {
+  color: #222;
+  font-weight: bold;
+}
+
+.fullscreen-controls input[type="color"] {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* ======================================
+   🌙 Fullscreen Overrides
+====================================== */
+:fullscreen .fullscreen-layout {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: #ccc;
+  padding: 0;
+  margin: 0;
+}
+
+:fullscreen .fullscreen-controls {
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  row-gap: 8px;
+  column-gap: 10px;
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+:fullscreen .fullscreen-controls button {
+  font-size: 0.85rem;
+  padding: 6px 12px;
+}
+
+:fullscreen .fullscreen-controls button {
+  background: #38c172;
+}
+
+:fullscreen .fullscreen-controls button:hover {
+  background: #2f9e5d;
+}
+
+:fullscreen .fullscreen-controls label {
+  color: limegreen;
+  text-shadow: 1px 1px black;
+}
+
+:fullscreen .fullscreen-controls input[type="color"] {
+  border: 2px solid white;
+}
+
+/* Expand canvas to full space in fullscreen (alt approach) */
+:fullscreen .fullscreen-layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: #ccc;
+}
+
+:fullscreen .drawing-canvas {
+  flex: 1;
+  width: 100vw;
+  height: 100%;
+  max-height: calc(100vh - 80px);
+  position: relative;
+  top: 0;
+  z-index: 1;
+  border-radius: 0;
+}
+
+.draw-button-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-height: 600px) {
+  :fullscreen .draw-button-wrapper {
+    max-height: 35vh;
+    overflow-y: auto;
   }
-  
-  .fullscreen-controls label {
-    color: limegreen;
-    font-weight: bold;
-    text-shadow: 1px 1px black;
-  }
-  
-  .fullscreen-controls input[type="color"] {
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    border: 2px solid white;
-    border-radius: 50%;
-    cursor: pointer;
-  }
-  
-  /* Buttons inside fullscreen top bar */
-  .fullscreen-controls button {
-    background: #38c172;
-    color: white;
-    font-size: 1rem;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.1s ease;
-  }
-  
-  .fullscreen-controls button:hover {
-    background: #2f9e5d;
-    transform: scale(1.05);
-  }
-  
-  .fullscreen-controls button:active {
-    transform: scale(0.95);
-  }
-  
-  /* Selected activity button */
-  .activity-list button.selected {
-    background-color: #2f9e5d;
-    border: 2px solid #249e4a;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  /* Allow canvas to expand in fullscreen */
-  :fullscreen .drawing-canvas {
-    position: fixed;
-    top: 220px; /* leave space for controls */
-    left: 0;
-    width: 100vw;
-    height: calc(100vh - 60px);
-    max-width: 100vw;
-    max-height: calc(100vh - 60px);
-    background: white;
-    z-index: 1;
-    border-radius: 0;
-  }
-  
+}
+
+
   /* Optional: Emoji decorations */
   #show-tell h2::before {
     content: "🎁 ";

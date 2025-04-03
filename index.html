@@ -6,6 +6,12 @@
   <title>Call Companion</title>
   <link rel="stylesheet" href="style.css" />
   <!-- Removed the onbeforeunload script to prevent reload prompts -->
+  <!-- Pickr styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css" />
+
+  <!-- Pickr script -->
+  <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
+
 </head>
 <body>
   <div class="container">
@@ -120,28 +126,43 @@
 
       </section>
 
-      <!-- Drawing Section -->
-        <section id="drawing-section" class="card hidden">
-            <h2>🎨 Let's Draw While We Chat</h2>
-            <p>You can draw up to 5 things per day! Just have fun with it!</p>
-        
-            <div class="draw-area">
-            <canvas id="drawCanvas" class="drawing-canvas" width="600" height="300"></canvas>
-            
-            <button type="button" onclick="clearCanvas()">🧽 Clear Drawing</button>
-            <button type="button" onclick="downloadDrawing()">📅 Download Drawing</button>
-            <button type="button" id="submitDrawingBtn" onclick="submitDrawing(event)">📤 Send Us Your Drawing</button>
-            <button type="button" id="fullscreenToggleButton" onclick="openFullscreen()">🖼 Fullscreen</button>
-        
-            <p id="drawingStatus" style="font-weight: bold; margin-top: 0.5rem;"></p>
-            <p id="drawingCounter" style="font-weight: bold;"></p>
-            </div>
-        
-            <div class="draw-toolbar">
-            <label for="colourPicker">Pick a colour:</label>
-            <input type="color" id="colourPicker" value="#000000" />
-            </div>
-        </section>
+
+ <!-- 🎨 Drawing Section -->
+<section id="drawing-section" class="card hidden">
+  <h2>🎨 Let's Draw While We Chat</h2>
+  <p>You can draw up to 5 things per day! Just have fun with it!</p>
+
+  <div class="draw-area fullscreen-layout">
+
+    <!-- 🎛️ Buttons + Counter + Status in one flex wrapper -->
+    <div class="draw-button-wrapper">
+      <div class="fullscreen-controls">
+        <button type="button" onclick="clearCanvas()">🧽 Clear Drawing</button>
+        <button type="button" onclick="downloadDrawing()">📅 Download Drawing</button>
+        <button type="button" id="submitDrawingBtn" onclick="submitDrawing(event)">📤 Send Us Your Drawing</button>
+        <button type="button" id="fullscreenToggleButton" onclick="openFullscreen()">🖼 Fullscreen</button>
+      </div>
+      <p id="drawingCounter" style="font-weight: bold; margin-top: 0.5rem;"></p>
+      <p id="drawingStatus" style="font-weight: bold; margin-top: 0.5rem;"></p>
+    </div>
+
+    <!-- 🖌️ Canvas Area -->
+    <div class="fullscreen-canvas">
+      <canvas id="drawCanvas" class="drawing-canvas" width="600" height="300"></canvas>
+    </div>
+
+    <!-- 🎨 Colour Picker -->
+    <div class="draw-toolbar">
+      <label for="colourPicker">Pick a colour:</label>
+      <div class="custom-colour-picker">
+        <label>Pick a colour:</label>
+        <div id="colourPicker"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
   
 
       <!-- Reward Stars -->
