@@ -222,6 +222,18 @@ function submitShowTellImage(event) {
     return;
   }
 
+  // ✅ Instant feedback
+  playSound('star');
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { y: 0.6 }
+  });
+
+  // ✅ Show spinner
+  statusMessage.innerHTML = `<span class="loading"></span>Sending photo...`;
+  statusMessage.style.color = "black";
+
   const formData = new FormData();
   formData.append('sectionId', 'show-tell');
   formData.append('response', JSON.stringify({ text: textInput.value }));
@@ -242,20 +254,28 @@ function submitShowTellImage(event) {
       fileInput.disabled = true;
       sendButton.disabled = true;
 
-      statusMessage.textContent = "🎉 Thanks for sharing! You can share again tomorrow.";
-      statusMessage.style.color = "purple";
-
       fileInput.value = "";
       textInput.value = "";
       previewContainer.innerHTML = "";
+
+      // ✅ Success message
+      statusMessage.innerHTML = "✅ Photo sent! You can share again tomorrow.";
+      statusMessage.style.color = "green";
+
+      // ✅ Award star after success
+      stars++;
+      localStorage.setItem("earnedStars", stars);
+      displayStars();
 
       completeSection('show-tell');
     })
     .catch(err => {
       console.error("Error uploading photo:", err);
-      alert("Failed to send photo. Please try again.");
+      statusMessage.textContent = "❌ Failed to send photo. Please try again.";
+      statusMessage.style.color = "red";
     });
 }
+
 
 
 function updateShowTellImageCount() {
@@ -286,28 +306,32 @@ function completeSection(sectionId) {
   console.log("👉 completeSection called with:", sectionId);
 
   const section = document.getElementById(sectionId);
-  if (sectionId === 'question-spinner') {
-    document.getElementById('question-spinner')?.classList.add('completed');
-  } else {
-    if (section?.classList.contains('completed')) return;
+  if (!section) {
+    console.warn(`⚠️ Section "${sectionId}" not found.`);
+    return;
   }
-  
 
+  const today = new Date().toISOString().split('T')[0];
   const existingData = JSON.parse(localStorage.getItem('callCompanionResponses') || '{}');
   let response = null;
   let shouldSend = true;
 
+  if (sectionId === 'question-spinner') {
+    section.classList.add('completed');
+  } else {
+    if (section.classList.contains('completed')) return;
+  }
+
   switch (sectionId) {
     case 'show-tell': {
-      // This is handled separately in submitShowTellImage()
+      // Already handled separately in submitShowTellImage()
       existingData['show-tell-completed'] = true;
-      localStorage.setItem(`showTellComplete_${today}`, 'true'); // ✅ Save flag
-      section.classList.add('completed');
-      section.classList.add('hidden'); // ✅ Hide it after completion
+      localStorage.setItem(`showTellComplete_${today}`, 'true');
+      section.classList.add('hidden');
       shouldSend = false;
       break;
     }
-    
+
     case 'mood-check': {
       response = document.getElementById('selectedMood')?.textContent || '';
       existingData['mood-check'] = response;
@@ -316,37 +340,29 @@ function completeSection(sectionId) {
 
     case 'question-spinner': {
       document.querySelector('#question-spinner input[type="text"]')?.blur();
-    
+
       if (!questionAnswers || questionAnswers.length === 0) {
         alert("Please answer at least one question.");
         shouldSend = false;
         break;
       }
-    
-      // 1) newResponses are the newly added answers
+
       const newResponses = [...questionAnswers];
-    
-      // 2) Append them to any previously stored spinner answers
       const previous = existingData['question-spinner'] || [];
       const appended = previous.concat(newResponses);
-    
-      // 3) Remove duplicates if the question+answer combo is identical
+
       const deduped = appended.filter((entry, idx, arr) =>
-        idx === arr.findIndex(e => 
+        idx === arr.findIndex(e =>
           e.question === entry.question && e.answer === entry.answer
         )
       );
-    
-      // 4) Save the final, deduplicated list to localStorage
+
       existingData['question-spinner'] = deduped;
-    
-      // 5) We'll only send the newly added answers to the backend
       response = newResponses;
-    
-      // 6) Clear out questionAnswers so next submission is fresh
+
       questionAnswers = [];
       localStorage.setItem("question-spinner-answers", JSON.stringify(questionAnswers));
-    
+
       const dailyTopics = getDailyTopics();
       if (dailyTopics.length === 0) {
         localStorage.setItem(`questionSpinnerLocked_${today}`, 'true');
@@ -354,9 +370,8 @@ function completeSection(sectionId) {
         document.getElementById('skipQuestionBtn').disabled = true;
         document.getElementById('questionText').textContent = '🎉 All questions answered today!';
       }
-    
-      // Hide the section after submission
-      section.classList.add('completed', 'hidden');
+
+      section.classList.add('hidden');
       break;
     }
 
@@ -366,39 +381,32 @@ function completeSection(sectionId) {
         shouldSend = false;
         break;
       }
-    
+
       const activityData = selectedActivities.map(activity => ({ activity }));
       existingData['activity-choice'] = activityData;
       response = activityData;
-    
-      // Visually mark section completed & hide it
-      section.classList.add('completed', 'hidden');
+
+      section.classList.add('hidden');
       localStorage.setItem(`activityChoiceComplete_${today}`, 'true');
-    
       break;
     }
-    
 
     default:
       shouldSend = false;
       break;
   }
 
-  // Save to localStorage
   localStorage.setItem('callCompanionResponses', JSON.stringify(existingData));
+  section.classList.add('completed');
 
-  // Visually mark section as completed
-  section?.classList.add('completed');
-
-  // Send to backend if needed
   if (shouldSend && response !== null) {
     const wrappedResponse = typeof response === 'string' ? { text: response } : response;
-  
+
     console.log("📤 Sending to backend:", {
       sectionId,
       response: wrappedResponse
     });
-  
+
     fetch('https://alyssas-app-backend.onrender.com/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -408,7 +416,8 @@ function completeSection(sectionId) {
       })
     });
   }
-  
+}
+
 
   // Award star
   stars++;
@@ -942,10 +951,11 @@ function updateDrawingCounter() {
 }
 
 async function submitDrawing(event) {
-  console.log("🖌️ Submit Drawing clicked");
-
   event.preventDefault();
   event.stopPropagation();
+
+  // Play sound right away (instant feedback), but DON'T increment star yet
+  playSound('star');
 
   const canvas = document.getElementById('drawCanvas');
   const statusEl = document.getElementById('drawingStatus');
@@ -956,6 +966,7 @@ async function submitDrawing(event) {
     return;
   }
 
+  const ctx = canvas.getContext('2d'); // Needed to clear canvas later
   const today = new Date().toISOString().split('T')[0];
   const drawingKey = `drawingCount_${today}`;
   let drawingCount = parseInt(localStorage.getItem(drawingKey) || '0');
@@ -982,8 +993,27 @@ async function submitDrawing(event) {
 
     if (!res.ok) throw new Error("Server error");
 
+    // ✅ Award star on success
+    stars++;
+    localStorage.setItem("earnedStars", stars);
+    displayStars();
+
+    // ✅ Increment drawing count
     drawingCount++;
     localStorage.setItem(drawingKey, drawingCount);
+
+    // ✅ Update visual counter
+    updateDrawingCounter();
+
+    // ✅ Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // ✅ 🎉 Fire confetti!
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
 
     if (drawingCount >= 5) {
       statusEl.textContent = "🎉 That's 5 drawings today — you're on fire! 🔥";
@@ -994,12 +1024,6 @@ async function submitDrawing(event) {
       statusEl.textContent = `✅ Drawing ${drawingCount}/5 sent! Keep going if you want!`;
       statusEl.style.color = "green";
     }
-
-    playSound('star');
-    stars++;
-    localStorage.setItem("earnedStars", stars);
-    displayStars();
-    updateDrawingCounter();
 
   } catch (err) {
     console.error('Error uploading drawing:', err);
