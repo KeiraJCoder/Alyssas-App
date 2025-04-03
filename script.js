@@ -7,6 +7,8 @@ import { QUESTION_DB } from './questionData.js';
 
 const TOPICS = Object.keys(QUESTION_DB);
 
+let erasing = false;
+let penSize = 3;
 let selectedColour = '#000000'; // initial pen colour
 let questionAnswers = JSON.parse(localStorage.getItem("question-spinner-answers") || "[]");
 let currentQuestion = '';
@@ -91,6 +93,25 @@ function initApp() {
 
   // Set default drawing colour
 selectedColour = '#000000';
+penSize = 3;
+erasing = false;
+
+const penSizeInput = document.getElementById('penSize');
+const eraserBtn = document.getElementById('eraserToggle');
+
+if (penSizeInput) {
+  penSizeInput.addEventListener('input', (e) => {
+    penSize = parseInt(e.target.value, 10);
+  });
+}
+
+if (eraserBtn) {
+  eraserBtn.addEventListener('click', () => {
+    erasing = !erasing;
+    eraserBtn.textContent = erasing ? '🩹 Eraser: On' : '🩹 Eraser: Off';
+  });
+}
+
 
 // 🎨 Normal colour picker
 const normalPicker = document.getElementById('normalColourPicker');
@@ -115,9 +136,6 @@ if (fullscreenPicker) {
     selectedColour = e.target.value;
   });
 }
-
-
-
 
   const savedStars = localStorage.getItem("earnedStars");
   if (savedStars) {
@@ -868,9 +886,9 @@ function setupCanvasEvents() {
     x *= canvas.width / rect.width;
     y *= canvas.height / rect.height;
   
-    ctx.lineWidth = 3;
+    ctx.lineWidth = penSize;
     ctx.lineCap = 'round';
-    ctx.strokeStyle = selectedColour;
+    ctx.strokeStyle = erasing ? '#ffffff' : selectedColour;
   
     ctx.lineTo(x, y);
     ctx.stroke();

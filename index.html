@@ -167,6 +167,15 @@
               <label for="fullscreenColourPicker">🎨 Custom Colour:</label>
               <input type="color" id="fullscreenColourPicker" value="#000000" />
             </div>
+            
+            <!-- ✏️ Pen Size and Eraser Controls -->
+            <div class="pen-options">
+              <label for="penSize">✏️ Pen Size:</label>
+              <input type="range" id="penSize" min="1" max="20" value="3">
+              
+              <button id="eraserToggle" type="button">🩹 Eraser: Off</button>
+            </div>
+
 
             <p id="drawingCounter" style="font-weight: bold; margin-top: 0.5rem;"></p>
             <p id="drawingStatus" style="font-weight: bold; margin-top: 0.5rem;"></p>
