@@ -1184,7 +1184,11 @@ function toggleSection(sectionId) {
   console.log(`🔄 Toggled section: ${sectionId}, Now hidden? ${section.classList.contains('hidden')}`);
 }
 
-// Make functions accessible to inline HTML
+// =============================
+// ✅ Load Functions Inline
+// =============================
+
+
 window.selectActivity = selectActivity;
 window.selectMood = selectMood;
 window.completeSection = completeSection;
