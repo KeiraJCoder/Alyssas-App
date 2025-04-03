@@ -7,6 +7,7 @@ import { QUESTION_DB } from './questionData.js';
 
 const TOPICS = Object.keys(QUESTION_DB);
 
+let selectedColour = '#000000'; // initial pen colour
 let questionAnswers = JSON.parse(localStorage.getItem("question-spinner-answers") || "[]");
 let currentQuestion = '';
 let selectedActivities = [];
@@ -80,9 +81,6 @@ if (savedQuestion) {
   document.getElementById('questionText').textContent = savedQuestion;
 }
 
-// // ✅ Add this immediately after
-// drawingControls = document.getElementById('drawingControls');
-
 
 window.onload = () => {
   initApp();
@@ -91,31 +89,34 @@ window.onload = () => {
 function initApp() {
   updateDrawingCounter();
 
-  let selectedColour = '#000000'; // initial pen colour
+  // Set default drawing colour
+selectedColour = '#000000';
 
-  const pickr = Pickr.create({
-    el: '#colourPicker',
-    theme: 'classic', // 'classic' is clean, or use 'nano'
-    default: selectedColour,
-    swatches: [
-      '#000000', '#ffffff', '#ff0000', '#00ff00',
-      '#0000ff', '#ffff00', '#00ffff', '#ff00ff'
-    ],
-    components: {
-      preview: true,
-      opacity: false,
-      hue: true,
-      interaction: {
-        input: true,
-        save: true
-      }
-    }
+// 🎨 Normal colour picker
+const normalPicker = document.getElementById('normalColourPicker');
+if (normalPicker) {
+  normalPicker.addEventListener('input', (e) => {
+    selectedColour = e.target.value;
   });
+}
 
-pickr.on('save', (color) => {
-  selectedColour = color.toHEXA().toString();
-  pickr.hide();
+// 🌈 Fullscreen swatches
+document.querySelectorAll('.fullscreen-swatches .swatch').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectedColour = btn.getAttribute('data-colour');
+    document.getElementById('fullscreenColourPicker').value = selectedColour;
+  });
 });
+
+// 🎨 Fullscreen custom colour picker
+const fullscreenPicker = document.getElementById('fullscreenColourPicker');
+if (fullscreenPicker) {
+  fullscreenPicker.addEventListener('input', (e) => {
+    selectedColour = e.target.value;
+  });
+}
+
+
 
 
   const savedStars = localStorage.getItem("earnedStars");
@@ -139,7 +140,6 @@ pickr.on('save', (color) => {
     }
   }
   
-
   if (savedData['activity-choice']) {
     const selectedActivityEl = document.getElementById('selectedActivity');
     const activityCard = document.getElementById('activity-choice');
@@ -163,13 +163,6 @@ pickr.on('save', (color) => {
     }
   }
   
-
-  // if (savedData['question-spinner']) {
-  //   questionAnswers = savedData['question-spinner'];
-  //   renderAnswerList();
-  //   document.getElementById('question-spinner')?.classList.add('completed');
-  // }
-
   setupCanvasEvents();
   setupDrawingToggle();
   setupResponseView();
@@ -835,16 +828,15 @@ function setupCanvasEvents() {
   const ctx = canvas.getContext('2d');
   let drawing = false;
 
-  function getTouchPos(touchEvent) {
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
-
-  return {
-    x: (touchEvent.touches[0].clientX - rect.left) * scaleX,
-    y: (touchEvent.touches[0].clientY - rect.top) * scaleY
-  };
-}
+  function getTouchPos(e) {
+    const rect = drawCanvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    return {
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top
+    };
+  }
+  
 
   function startDrawing(e) {
     drawing = true;
@@ -859,26 +851,33 @@ function setupCanvasEvents() {
   function draw(e) {
     if (!drawing) return;
     e.preventDefault();
+  
+    const rect = canvas.getBoundingClientRect();
+    let x, y;
+  
+    if (e.type.startsWith("touch")) {
+      const touch = e.touches[0];
+      x = touch.clientX - rect.left;
+      y = touch.clientY - rect.top;
+    } else {
+      x = e.clientX - rect.left;
+      y = e.clientY - rect.top;
+    }
+  
+    // Scale coordinates based on canvas resolution
+    x *= canvas.width / rect.width;
+    y *= canvas.height / rect.height;
+  
     ctx.lineWidth = 3;
     ctx.lineCap = 'round';
     ctx.strokeStyle = selectedColour;
-
-
-    let x, y;
-    if (e.type.startsWith("touch")) {
-      const pos = getTouchPos(e);
-      x = pos.x;
-      y = pos.y;
-    } else {
-      x = e.offsetX;
-      y = e.offsetY;
-    }
-
+  
     ctx.lineTo(x, y);
     ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(x, y);
   }
+  
 
   function stopDrawing(e) {
     drawing = false;
@@ -916,17 +915,32 @@ function openFullscreen() {
   container.requestFullscreen().then(() => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+
+
+    document.querySelector('.colour-picker-wrapper').classList.add('hidden');
+    document.querySelector('.fullscreen-swatches')?.classList.remove('hidden');
+    document.querySelector('.fullscreen-picker-row')?.classList.remove('hidden');
+    
+
     const fullscreenBtn = document.getElementById('fullscreenToggleButton');
     if (fullscreenBtn) {
       fullscreenBtn.innerText = '❌ Exit Fullscreen';
       fullscreenBtn.onclick = closeFullscreen;
     }
+
     window.addEventListener('resize', resizeCanvasFullscreen);
   });
 }
 
+
 function closeFullscreen() {
   if (document.fullscreenElement) document.exitFullscreen();
+
+
+  document.querySelector('.colour-picker-wrapper').classList.remove('hidden');
+  document.querySelector('.fullscreen-swatches')?.classList.add('hidden');
+  document.querySelector('.fullscreen-picker-row')?.classList.add('hidden');
+  
 
   const fullscreenBtn = document.getElementById('fullscreenToggleButton');
   if (fullscreenBtn) {
@@ -942,6 +956,8 @@ function closeFullscreen() {
 
   window.removeEventListener('resize', resizeCanvasFullscreen);
 }
+
+
 
 function resizeCanvasFullscreen() {
   const canvas = document.getElementById('drawCanvas');

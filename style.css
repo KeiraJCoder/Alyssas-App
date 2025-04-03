@@ -340,10 +340,6 @@ canvas#drawCanvas {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Optional height cap for legacy logic */
-.drawing-canvas {
-  height: 300px;
-}
 
 /* Expand height to 100% in fullscreen */
 :fullscreen canvas#drawCanvas {
@@ -397,7 +393,7 @@ canvas#drawCanvas {
 }
 
 /* ======================================
-   🎨 General Drawing Area Setup
+   🎨 Drawing Area - Layout & Structure
 ====================================== */
 .draw-area {
   display: flex;
@@ -418,19 +414,13 @@ canvas#drawCanvas {
   align-items: center;
 }
 
-/* Toolbar with colour picker */
-.draw-toolbar {
+.draw-button-wrapper {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-bottom: 10px;
 }
 
-.text {
-  text-shadow: 1px 1px black;
-  color: rgb(0, 255, 4);
-}
 
 /* ======================================
    🖌️ Canvas Styling (Normal View)
@@ -439,7 +429,7 @@ canvas#drawCanvas {
 canvas#drawCanvas {
   width: 100%;
   max-width: 100%;
-  height: auto;
+  height: 300px; /* fixed height for consistency */
   max-height: 80vh;
   background: white;
   border-radius: 10px;
@@ -456,13 +446,9 @@ canvas#drawCanvas {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Legacy fixed height if needed */
-.drawing-canvas {
-  height: 300px;
-}
 
 /* ======================================
-   🔘 Drawing Buttons (Below Canvas)
+   🔘 Drawing Buttons (Normal View)
 ====================================== */
 .draw-buttons {
   margin-top: 10px;
@@ -496,8 +482,9 @@ canvas#drawCanvas {
   margin-top: 10px;
 }
 
+
 /* ======================================
-   🧰 Fullscreen Controls (Normal View)
+   🎛️ Controls Row (Button Bar)
 ====================================== */
 .fullscreen-controls {
   display: flex;
@@ -533,30 +520,65 @@ canvas#drawCanvas {
   transform: scale(0.95);
 }
 
-.fullscreen-controls label {
-  color: #222;
-  font-weight: bold;
+
+/* ======================================
+   🎨 Colour Picker Row
+====================================== */
+.colour-picker-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-.fullscreen-controls input[type="color"] {
+.colour-picker-wrapper label {
+  font-weight: bold;
+  color: #444;
+}
+
+.colour-picker-wrapper input[type="color"] {
   width: 40px;
   height: 40px;
-  padding: 0;
-  border: 2px solid #ccc;
   border-radius: 50%;
+  border: 2px solid white;
   cursor: pointer;
+  background-color: transparent;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+/* ======================================
+   🌙 Fullscreen-Specific Overrides
+====================================== */
+:fullscreen .draw-area {
+  overflow: visible !important;
 }
 
 /* ======================================
    🌙 Fullscreen Overrides
 ====================================== */
 :fullscreen .fullscreen-layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
   background: #ccc;
-  padding: 0;
   margin: 0;
+  padding: 0;
+}
+
+:fullscreen .drawing-canvas {
+  flex: 1;
+  width: 100vw;
+  height: 100%;
+  max-height: calc(100vh - 80px);
+  position: relative;
+  top: 0;
+  z-index: 0;
+  border-radius: 0;
 }
 
 :fullscreen .fullscreen-controls {
@@ -573,9 +595,6 @@ canvas#drawCanvas {
 :fullscreen .fullscreen-controls button {
   font-size: 0.85rem;
   padding: 6px 12px;
-}
-
-:fullscreen .fullscreen-controls button {
   background: #38c172;
 }
 
@@ -592,43 +611,17 @@ canvas#drawCanvas {
   border: 2px solid white;
 }
 
-/* Expand canvas to full space in fullscreen (alt approach) */
-:fullscreen .fullscreen-layout {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  background: #ccc;
+:fullscreen .colour-picker-wrapper {
+  z-index: 10001;
 }
 
-:fullscreen .drawing-canvas {
-  flex: 1;
-  width: 100vw;
-  height: 100%;
-  max-height: calc(100vh - 80px);
-  position: relative;
-  top: 0;
-  z-index: 1;
-  border-radius: 0;
-}
-
-.draw-button-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
+/* Adjust layout for small vertical screens */
 @media (max-height: 600px) {
   :fullscreen .draw-button-wrapper {
     max-height: 35vh;
     overflow-y: auto;
   }
 }
-
 
   /* Optional: Emoji decorations */
   #show-tell h2::before {

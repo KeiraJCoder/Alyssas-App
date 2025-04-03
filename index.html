@@ -5,13 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Call Companion</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Removed the onbeforeunload script to prevent reload prompts -->
-  <!-- Pickr styles -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css" />
-
-  <!-- Pickr script -->
-  <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
-
 </head>
 <body>
   <div class="container">
@@ -127,43 +120,65 @@
       </section>
 
 
- <!-- 🎨 Drawing Section -->
-<section id="drawing-section" class="card hidden">
-  <h2>🎨 Let's Draw While We Chat</h2>
-  <p>You can draw up to 5 things per day! Just have fun with it!</p>
+      <!-- 🎨 Drawing Section -->
+      <section id="drawing-section" class="card hidden">
+        <h2>🎨 Let's Draw While We Chat</h2>
+        <p>You can draw up to 5 things per day! Just have fun with it!</p>
 
-  <div class="draw-area fullscreen-layout">
+        <div class="draw-area fullscreen-layout">
 
-    <!-- 🎛️ Buttons + Counter + Status in one flex wrapper -->
-    <div class="draw-button-wrapper">
-      <div class="fullscreen-controls">
-        <button type="button" onclick="clearCanvas()">🧽 Clear Drawing</button>
-        <button type="button" onclick="downloadDrawing()">📅 Download Drawing</button>
-        <button type="button" id="submitDrawingBtn" onclick="submitDrawing(event)">📤 Send Us Your Drawing</button>
-        <button type="button" id="fullscreenToggleButton" onclick="openFullscreen()">🖼 Fullscreen</button>
-      </div>
-      <p id="drawingCounter" style="font-weight: bold; margin-top: 0.5rem;"></p>
-      <p id="drawingStatus" style="font-weight: bold; margin-top: 0.5rem;"></p>
-    </div>
+          <!-- 🎛️ Buttons + Counter + Status in one flex wrapper -->
+          <div class="draw-button-wrapper">
+            <div class="fullscreen-controls">
+              <button type="button" onclick="clearCanvas()">🧽 Clear Drawing</button>
+              <button type="button" onclick="downloadDrawing()">📅 Download Drawing</button>
+              <button type="button" id="submitDrawingBtn" onclick="submitDrawing(event)">📤 Send Us Your Drawing</button>
+              <button type="button" id="fullscreenToggleButton" onclick="openFullscreen()">🖼 Fullscreen</button>
+            </div>
 
-    <!-- 🖌️ Canvas Area -->
-    <div class="fullscreen-canvas">
-      <canvas id="drawCanvas" class="drawing-canvas" width="600" height="300"></canvas>
-    </div>
+            <!-- 🎨 Regular Colour Picker (Normal Mode) -->
+            <div class="colour-picker-wrapper">
+              <label for="normalColourPicker">Pick a colour:</label>
+              <input type="color" id="normalColourPicker" value="#000000" />
+            </div>
 
-    <!-- 🎨 Colour Picker -->
-    <div class="draw-toolbar">
-      <label for="colourPicker">Pick a colour:</label>
-      <div class="custom-colour-picker">
-        <label>Pick a colour:</label>
-        <div id="colourPicker"></div>
-      </div>
-    </div>
+            <!-- 🌈 Fullscreen Colour Swatches (Rainbow Gradient Style) -->
+            <div class="fullscreen-swatches hidden">
+              <!-- Rainbow Progression -->
+              <button class="swatch" data-colour="#FF0000" style="background:#FF0000;"></button> <!-- Red -->
+              <button class="swatch" data-colour="#FF7F00" style="background:#FF7F00;"></button> <!-- Orange -->
+              <button class="swatch" data-colour="#FFFF00" style="background:#FFFF00;"></button> <!-- Yellow -->
+              <button class="swatch" data-colour="#00FF00" style="background:#00FF00;"></button> <!-- Green -->
+              <button class="swatch" data-colour="#0000FF" style="background:#0000FF;"></button> <!-- Blue -->
+              <button class="swatch" data-colour="#4B0082" style="background:#4B0082;"></button> <!-- Indigo -->
+              <button class="swatch" data-colour="#8B00FF" style="background:#8B00FF;"></button> <!-- Violet -->
 
-  </div>
-</section>
+              <!-- Soft & pastel versions -->
+              <button class="swatch" data-colour="#FFB6C1" style="background:#FFB6C1;"></button> <!-- Light Pink -->
+              <button class="swatch" data-colour="#FFDAB9" style="background:#FFDAB9;"></button> <!-- Peach -->
+              <button class="swatch" data-colour="#FFFFE0" style="background:#FFFFE0;"></button> <!-- Light Yellow -->
+              <button class="swatch" data-colour="#98FB98" style="background:#98FB98;"></button> <!-- Pale Green -->
+              <button class="swatch" data-colour="#ADD8E6" style="background:#ADD8E6;"></button> <!-- Light Blue -->
+              <button class="swatch" data-colour="#DDA0DD" style="background:#DDA0DD;"></button> <!-- Plum -->
+            </div>
 
-  
+            <!-- Optional Colour Picker in Fullscreen -->
+            <div class="fullscreen-picker-row hidden">
+              <label for="fullscreenColourPicker">🎨 Custom Colour:</label>
+              <input type="color" id="fullscreenColourPicker" value="#000000" />
+            </div>
+
+            <p id="drawingCounter" style="font-weight: bold; margin-top: 0.5rem;"></p>
+            <p id="drawingStatus" style="font-weight: bold; margin-top: 0.5rem;"></p>
+          </div>
+
+          <!-- 🖌️ Canvas Area -->
+          <div class="fullscreen-canvas">
+            <canvas id="drawCanvas" class="drawing-canvas" width="600" height="300"></canvas>
+          </div>
+        </div>
+      </section>
+
 
       <!-- Reward Stars -->
       <section id="reward-section" class="card">
@@ -183,7 +198,5 @@
 
     <script type="module" src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-
 </body>
 </html>
